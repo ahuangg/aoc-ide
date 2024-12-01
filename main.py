@@ -34,7 +34,7 @@ class Client:
         })
         
         now = datetime.now()
-        self.year = 2022
+        self.year = now.year
         self.day = now.day
         
         self.dir_name = f"aoc_{self.year}/day_{self.day}"
