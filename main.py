@@ -43,41 +43,43 @@ class Client:
         self.submitted = set([None])
     
     def run(self): 
-       if not os.path.exists(self.dir_name): 
-           self.create_template()
-   
-       self.load_notebook()
-       self.check_solved()
-       
-       while self.notebook and (not self.solved[1] or not self.solved[2]):
-           if 0 <= len(self.notebook["cells"]) < 3:
-               part_1 = self.get_problem_part_1()
-               self.update_template("input1", part_1)
-               self.get_input("input1")
-               print(f"Updated notebook for {self.year} day {self.day} - Part 1")
-               continue
-               
-           if self.solved[1] and len(self.notebook["cells"]) < 5: 
-               part_2 = self.get_problem_part_2()
-               self.update_template("input2", part_2)
-               self.get_input("input2")
-               print(f"Updated notebook for {self.year} day {self.day} - Part 2")
-               continue
-           
-           if not self.solved[1]:
-               self.solution = self.read_solution(3)
-           else:
-               self.solution = self.read_solution(6)
-               
-           if self.solution and self.solution not in self.submitted:
-               self.submitted.add(self.solution)
-               self.submit_solution(1 if not self.solved[1] else 2)
-               
-           time.sleep(1)
-           
-       if self.solved[1] and self.solved[2]:
-           print(f"Completed {self.year} day {self.day}")
+        self.check_solved()
+        
+        if self.confirm_solved():
+            return
+        
+        if not os.path.exists(self.dir_name): 
+            self.create_template()
+    
+        self.load_notebook()
+        
+        while self.notebook and (not self.solved[1] or not self.solved[2]):
+            if 0 <= len(self.notebook["cells"]) < 3:
+                part_1 = self.get_problem_part_1()
+                self.update_template("input1", part_1)
+                self.get_input("input1")
+                print(f"Updated notebook for {self.year} day {self.day} - Part 1")
+                continue
+                
+            if self.solved[1] and len(self.notebook["cells"]) < 5: 
+                part_2 = self.get_problem_part_2()
+                self.update_template("input2", part_2)
+                self.get_input("input2")
+                print(f"Updated notebook for {self.year} day {self.day} - Part 2")
+                continue
             
+            if not self.solved[1]:
+                self.solution = self.read_solution(3)
+            else:
+                self.solution = self.read_solution(6)
+                
+            if self.solution and self.solution not in self.submitted:
+                self.submitted.add(self.solution)
+                self.submit_solution(1 if not self.solved[1] else 2)
+                
+            time.sleep(1)
+            
+        self.confirm_solved()     
         
     def create_template(self):
         os.makedirs(self.dir_name, exist_ok=True)
@@ -222,6 +224,12 @@ class Client:
             
         return None
         
+    def confirm_solved(self):
+        if self.solved[1] and self.solved[2]:
+            print(f"Completed {self.year} day {self.day}")
+            return True
+
+        return False
 
 def main():
     load_dotenv('.env')
