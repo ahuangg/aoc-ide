@@ -29,6 +29,9 @@ class Client:
     def __init__(self, session_id):
         self.session = requests.Session()
         self.session.cookies.set('session', session_id)
+        self.session.headers.update({
+            'User-Agent': 'github.com/ahuangg/advent-of-code-2024 by ahuang7840@gmail.com'
+        })
         
         now = datetime.now()
         self.year = 2022
